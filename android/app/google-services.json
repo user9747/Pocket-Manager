@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "757603621824",
+    "firebase_url": "https://akcssc18.firebaseio.com",
+    "project_id": "akcssc18",
+    "storage_bucket": "akcssc18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757603621824:android:6698a5f283550e103fc625",
+        "android_client_info": {
+          "package_name": "com.example.kadam_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "757603621824-14ldp2dmuanpqrjit8mdmc0ktbkf51q2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kadam_manager",
+            "certificate_hash": "ef26d42d5a09b3424b2c407a4f8a38542424100a"
+          }
+        },
+        {
+          "client_id": "757603621824-f5duvvjqjjgptlsn8r58t0ip3jvoknmd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgm4e-bOYQcq_ZSOMrbWStGwCFm8f2lCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "757603621824-f5duvvjqjjgptlsn8r58t0ip3jvoknmd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

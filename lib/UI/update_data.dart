@@ -16,14 +16,32 @@ class Repository {
     return kadam;
   }
 
-  void createRecord(double amount,String desc) async {
+  void createRecord(String name,double amount, String desc) async {
     print("Creating Record...");
     user = await FirebaseAuth.instance.currentUser();
     print(user.uid);
     var now = new DateTime.now();
-    String name = "Amal";
+    // String name = "Amal";
     List arr = [];
-    arr.add({'date': now, 'amount': 10, 'description': 'MSd'});
+    arr.add({'date': now, 'amount': amount, 'description': desc});
+    DocumentSnapshot snap =
+        await databaseReference.collection("user").document(user.uid).get();
+    if (snap.exists) {
+      await databaseReference
+          .collection("user")
+          .document(user.uid)
+          .updateData({name: FieldValue.arrayUnion(arr)});
+    } else {
+      await databaseReference
+          .collection("user")
+          .document(user.uid)
+          .setData({name: arr});
+    }
+  }
+
+  void createUserDoc(String name) async {
+    user = await FirebaseAuth.instance.currentUser();
+    List arr = [];
     DocumentSnapshot snap =
         await databaseReference.collection("user").document(user.uid).get();
     if (snap.exists) {

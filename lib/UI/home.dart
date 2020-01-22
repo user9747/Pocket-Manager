@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'auth.dart';
 import 'update_data.dart';
 
@@ -71,31 +70,29 @@ class Home extends StatelessWidget {
             }
           },
         ),
-        floatingActionButton: Container(
-            child: Icon(Icons.add),
-            padding: const EdgeInsets.all(28.0),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                shape: BoxShape.circle,
-                // borderRadius: BorderRadius.circular(27.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 10.0,
-                    offset: Offset(-7, -7),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.075),
-                    blurRadius: 10.0,
-                    offset: Offset(7, 7),
-                  )
-                ])));
+        floatingActionButton: InkWell(
+          child: MyFloatingButton(),
+          onTap: () {
+            return myDialog(context);
+          },
+        ));
+  }
+
+  myDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.grey.shade100.withOpacity(0),
+            child: DialogueForm(),
+          );
+        });
   }
 }
 
 class MyCard extends StatelessWidget {
   final String name;
-  MyCard(this.name);
+  MyCard(this.name, [String s]);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -120,6 +117,81 @@ class MyCard extends StatelessWidget {
               offset: Offset(7, 7),
             )
           ]),
+    );
+  }
+}
+
+class MyFloatingButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Icon(Icons.add),
+        padding: const EdgeInsets.all(28.0),
+        decoration:
+            BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle,
+                // borderRadius: BorderRadius.circular(27.0),
+                boxShadow: [
+              BoxShadow(
+                color: Colors.white,
+                blurRadius: 10.0,
+                offset: Offset(-7, -7),
+              ),
+              BoxShadow(
+                color: Colors.black.withOpacity(.075),
+                blurRadius: 10.0,
+                offset: Offset(7, 7),
+              )
+            ]));
+  }
+}
+
+class DialogueForm extends StatefulWidget {
+  @override
+  _DialogueFormState createState() => _DialogueFormState();
+}
+
+class _DialogueFormState extends State<DialogueForm> {
+  final nameController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 320,
+      margin: EdgeInsets.all(15),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextFormField(
+              decoration:
+                  InputDecoration(labelText: 'Name', icon: Icon(Icons.person)),
+              controller: nameController,
+            ),
+            RaisedButton(
+              child: Text('Add'),
+              onPressed: () {
+                print(nameController.text);
+                if (nameController.text != null) {
+                  Repository.get().createUserDoc(nameController.text);
+                }
+                Navigator.pop(context);
+              },
+            )
+          ],
+        ),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(27.0),
+      ),
     );
   }
 }

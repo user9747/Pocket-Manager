@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'update_data.dart';
+import 'custom_components.dart';
 
 class Kadam extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     List args = ModalRoute.of(context).settings.arguments;
@@ -13,7 +14,7 @@ class Kadam extends StatelessWidget {
     // print(snapshot.data.data);
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey.shade100,
         body: StreamBuilder(
           stream: Repository.get().getRecord(uid),
@@ -33,7 +34,9 @@ class Kadam extends StatelessWidget {
                   var data = snapshot.data.data[key][index];
                   return InkWell(
                     child: MyCard(
-                        data['amount'], data['date'], data['description']),
+                      child: Details(key, data['amount'], data['date'],
+                          data['description']),
+                    ),
                     onTap: () {
                       // print(snapshot.data.data [key]);
                       // Navigator.pushNamed(context, '/kadam',arguments: snapshot);
@@ -47,12 +50,12 @@ class Kadam extends StatelessWidget {
         floatingActionButton: InkWell(
           child: MyFloatingButton(),
           onTap: () {
-            return myDialog(context,key);
+            return myDialog(context, key);
           },
         ));
   }
 
-  myDialog(BuildContext context,String name) {
+  myDialog(BuildContext context, String name) {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -64,84 +67,95 @@ class Kadam extends StatelessWidget {
   }
 }
 
-class MyCard extends StatelessWidget {
+class Details extends StatelessWidget {
+  String name;
   double amount;
   DateTime date;
   String desc;
+  Timestamp timeStamp;
 
-  MyCard(amount, date, desc) {
+  Details(name, amount, date, desc) {
+    this.name = name;
     this.amount = amount;
+    this.timeStamp = date;
     this.date = date.toDate();
     this.desc = desc;
   }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      margin: EdgeInsets.all(15),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text('₹${amount}'),
-              Text(
-                  '${date.day}-${date.month}-${date.year}(${date.hour}:${date.minute})')
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Text(desc)],
-          )
-        ],
-      ),
-      decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(27.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white,
-              blurRadius: 10.0,
-              offset: Offset(-7, -7),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(.075),
-              blurRadius: 10.0,
-              offset: Offset(7, 7),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Text('₹${amount}'),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                confirm(context);
+              },
             )
-          ]),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Text(desc),
+            Text(
+                '${date.day}-${date.month}-${date.year}(${date.hour}:${date.minute})')
+          ],
+        )
+      ],
     );
   }
-}
 
-class MyFloatingButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Icon(Icons.add),
-        padding: const EdgeInsets.all(28.0),
-        decoration:
-            BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle,
-                // borderRadius: BorderRadius.circular(27.0),
-                boxShadow: [
-              BoxShadow(
-                color: Colors.white,
-                blurRadius: 10.0,
-                offset: Offset(-7, -7),
+  confirm(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            backgroundColor: Colors.grey.shade100.withOpacity(0),
+            child: Container(
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Do you want to delete?'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('Yes'),
+                        onPressed: () {
+                          Repository.get()
+                              .removeRecord(name, amount, desc, timeStamp);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  )
+                ],
               ),
-              BoxShadow(
-                color: Colors.black.withOpacity(.075),
-                blurRadius: 10.0,
-                offset: Offset(7, 7),
-              )
-            ]));
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(27.0),
+              ),
+            ),
+          );
+        });
   }
 }
 
 class DialogueForm extends StatefulWidget {
-  final String name ;
+  final String name;
   DialogueForm(this.name);
   @override
   _DialogueFormState createState() => _DialogueFormState();
@@ -150,8 +164,6 @@ class DialogueForm extends StatefulWidget {
 class _DialogueFormState extends State<DialogueForm> {
   final amountController = TextEditingController();
   final descController = TextEditingController();
-
-
 
   @override
   void dispose() {
@@ -171,22 +183,34 @@ class _DialogueFormState extends State<DialogueForm> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextFormField(
-              decoration:
-                  InputDecoration(labelText: 'Amount', icon: Icon(Icons.monetization_on)),
-                  keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  labelText: 'Amount', icon: Icon(Icons.monetization_on)),
+              keyboardType: TextInputType.number,
               controller: amountController,
             ),
+            SizedBox(
+              child: Container(
+                height: 15,
+              ),
+            ),
             TextFormField(
-              decoration:
-                  InputDecoration(labelText: 'Description', icon: Icon(Icons.description)),
+              decoration: InputDecoration(
+                  labelText: 'Description', icon: Icon(Icons.description)),
               controller: descController,
+            ),
+            SizedBox(
+              child: Container(
+                height: 25,
+              ),
             ),
             RaisedButton(
               child: Text('Add'),
               onPressed: () {
                 print(amountController.text);
-                if (amountController.text != null && descController.text != null) {
-                  Repository.get().createRecord(widget.name,double.parse(amountController.text), descController.text);
+                if (amountController.text != null &&
+                    descController.text != null) {
+                  Repository.get().createRecord(widget.name,
+                      double.parse(amountController.text), descController.text);
                 }
                 Navigator.pop(context);
               },

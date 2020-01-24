@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     print("done loading...");
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "test login",
       color: Colors.grey.shade100,
       home: MainPage(),

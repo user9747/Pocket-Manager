@@ -16,7 +16,7 @@ class Repository {
     return kadam;
   }
 
-  void createRecord(String name,double amount, String desc) async {
+  void createRecord(String name, double amount, String desc) async {
     print("Creating Record...");
     user = await FirebaseAuth.instance.currentUser();
     print(user.uid);
@@ -30,12 +30,27 @@ class Repository {
       await databaseReference
           .collection("user")
           .document(user.uid)
-          .updateData({name: FieldValue.arrayUnion(arr)});
+          .updateData({name: FieldValue.arrayUnion(arr)}); 
     } else {
       await databaseReference
           .collection("user")
           .document(user.uid)
           .setData({name: arr});
+    }
+  }
+
+  void removeRecord(String name, double amount, String desc,Timestamp now) async {
+    print("Creating Record...");
+    user = await FirebaseAuth.instance.currentUser();
+    List arr = [];
+    arr.add({'date': now, 'amount': amount, 'description': desc});
+    DocumentSnapshot snap =
+        await databaseReference.collection("user").document(user.uid).get();
+    if (snap.exists) {
+      await databaseReference
+          .collection("user")
+          .document(user.uid)
+          .updateData({name: FieldValue.arrayRemove(arr)});
     }
   }
 

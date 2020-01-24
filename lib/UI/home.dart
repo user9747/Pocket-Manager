@@ -1,41 +1,75 @@
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'update_data.dart';
+import 'custom_components.dart';
 
-class Home extends StatelessWidget {
-  // Future<List> items =  Repository().getRecord();
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  TextEditingController searchController = TextEditingController();
+  String filter;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(() {
+      setState(() {
+        filter = searchController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // print(items);
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(color: Colors.black),
+          elevation: 1.5,brightness: Brightness.light,
+          title: TextField(
+            controller: searchController,
+            cursorColor: Colors.black,
+            style: TextStyle(fontSize: 25),
+            decoration: InputDecoration(
+                focusColor: Colors.black,
+                hoverColor: Colors.black,
+                hintText: 'Search',
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                icon: Icon(Icons.search,size: 33,)),
           ),
           backgroundColor: Colors.grey.shade100,
           actions: <Widget>[
-            RaisedButton.icon(
-                onPressed: () {
-                  Auth().logout();
-                },
-                icon: Icon(
-                  Icons.home,
-                  color: Colors.black,
-                ),
-                color: Colors.grey.shade100,
-                label: Text("Logout"),
-                textColor: Colors.black),
+            IconButton(
+              onPressed: () {
+                Auth().logout();
+              },
+              icon: Icon(
+                Icons.power_settings_new,
+                color: Colors.black,
+                size: 30,
+              ),
+              color: Colors.grey.shade100,
+            ),
           ],
         ),
         body: FutureBuilder(
           future: Repository.get().getCurrentUser(),
           builder: (contex, futureShot) {
             if (futureShot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator(
-                backgroundColor: Colors.white,
-              );
+              return Center(
+                  // child: CircularProgressIndicator(
+                  //     backgroundColor: Colors.grey)
+                  );
             } else {
               String uid = futureShot.data.uid;
               // print('hello ${uid}');
@@ -45,8 +79,9 @@ class Home extends StatelessWidget {
                   if (snapshot.connectionState == ConnectionState.none ||
                       snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
-                        child: CircularProgressIndicator(
-                            backgroundColor: Colors.white));
+                        // child: CircularProgressIndicator(
+                        //     backgroundColor: Colors.grey)
+                        );
                   } else {
                     return ListView.builder(
                       itemCount: snapshot.data.data.keys.length,
@@ -54,14 +89,29 @@ class Home extends StatelessWidget {
                         // print(snapshot.data.data.keys.toList()[index]);
                         var key = snapshot.data.data.keys.toList()[index];
                         // print(snapshot.data.data[key]);
-                        return InkWell(
-                          child: MyCard(key),
-                          onTap: () {
-                            // print(snapshot.data.data[key]);
-                            Navigator.pushNamed(context, '/kadam',
-                                arguments: [key, uid]);
-                          },
-                        );
+                        return (filter == null || filter == ""
+                            ? InkWell(
+                                child: MyCard(
+                                  child: Text(key),
+                                ),
+                                onTap: () {
+                                  // print(snapshot.data.data[key]);
+                                  Navigator.pushNamed(context, '/kadam',
+                                      arguments: [key, uid]);
+                                },
+                              )
+                            : key.toLowerCase().contains(filter.toLowerCase())
+                                ? InkWell(
+                                    child: MyCard(
+                                      child: Text(key),
+                                    ),
+                                    onTap: () {
+                                      // print(snapshot.data.data[key]);
+                                      Navigator.pushNamed(context, '/kadam',
+                                          arguments: [key, uid]);
+                                    },
+                                  )
+                                : Container());
                       },
                     );
                   }
@@ -90,60 +140,36 @@ class Home extends StatelessWidget {
   }
 }
 
-class MyCard extends StatelessWidget {
-  final String name;
-  MyCard(this.name, [String s]);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      margin: EdgeInsets.all(15),
-      child: Center(
-        child: Text(name),
-      ),
-      decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(27.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white,
-              blurRadius: 10.0,
-              offset: Offset(-7, -7),
-            ),
-            BoxShadow(
-              color: Colors.black.withOpacity(.075),
-              blurRadius: 10.0,
-              offset: Offset(7, 7),
-            )
-          ]),
-    );
-  }
-}
-
-class MyFloatingButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: Icon(Icons.add),
-        padding: const EdgeInsets.all(28.0),
-        decoration:
-            BoxDecoration(color: Colors.grey.shade100, shape: BoxShape.circle,
-                // borderRadius: BorderRadius.circular(27.0),
-                boxShadow: [
-              BoxShadow(
-                color: Colors.white,
-                blurRadius: 10.0,
-                offset: Offset(-7, -7),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(.075),
-                blurRadius: 10.0,
-                offset: Offset(7, 7),
-              )
-            ]));
-  }
-}
+// class MyCard extends StatelessWidget {
+//   final String name;
+//   MyCard(this.name, [String s]);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 120,
+//       margin: EdgeInsets.all(15),
+//       child: Center(
+//         child: Text(name),
+//       ),
+//       decoration: BoxDecoration(
+//           color: Colors.grey.shade100,
+//           shape: BoxShape.rectangle,
+//           borderRadius: BorderRadius.circular(27.0),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.white,
+//               blurRadius: 10.0,
+//               offset: Offset(-7, -7),
+//             ),
+//             BoxShadow(
+//               color: Colors.black.withOpacity(.075),
+//               blurRadius: 10.0,
+//               offset: Offset(7, 7),
+//             )
+//           ]),
+//     );
+//   }
+// }
 
 class DialogueForm extends StatefulWidget {
   @override
@@ -174,6 +200,11 @@ class _DialogueFormState extends State<DialogueForm> {
                   InputDecoration(labelText: 'Name', icon: Icon(Icons.person)),
               controller: nameController,
             ),
+            SizedBox(
+              child: Container(
+                height: 25,
+              ),
+            ),
             RaisedButton(
               child: Text('Add'),
               onPressed: () {
@@ -195,3 +226,14 @@ class _DialogueFormState extends State<DialogueForm> {
     );
   }
 }
+
+// InkWell(
+//                           child: MyCard(
+//                             child: Text(key),
+//                           ),
+//                           onTap: () {
+//                             // print(snapshot.data.data[key]);
+//                             Navigator.pushNamed(context, '/kadam',
+//                                 arguments: [key, uid]);
+//                           },
+//                         );

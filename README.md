@@ -1,4 +1,4 @@
-![alt text](https://github.com/user9747/Pocket-Manager/workflows/.github/workflows/flutter.yml/badge.svg "Flutter Build")
+![alt text](https://github.com/user9747/Pocket-Manager/workflows/Test, Build and Release apk/badge.svg "Flutter Build")
 # kadam_manager
 
 A new Flutter project.

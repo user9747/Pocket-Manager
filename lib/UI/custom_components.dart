@@ -8,7 +8,7 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: this.height,
-      margin: EdgeInsets.fromLTRB(25, 35, 25, 0),
+      margin: EdgeInsets.fromLTRB(25, 18, 25, 0),
       child: Center(
         child: this.child,
       ),

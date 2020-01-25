@@ -34,7 +34,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
         backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
-          elevation: 1.5,brightness: Brightness.light,
+          elevation: 1.5,
+          brightness: Brightness.light,
           title: TextField(
             controller: searchController,
             cursorColor: Colors.black,
@@ -45,7 +46,10 @@ class _HomeState extends State<Home> {
                 hintText: 'Search',
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                icon: Icon(Icons.search,size: 33,)),
+                icon: Icon(
+                  Icons.search,
+                  size: 33,
+                )),
           ),
           backgroundColor: Colors.grey.shade100,
           actions: <Widget>[
@@ -54,7 +58,7 @@ class _HomeState extends State<Home> {
                 Auth().logout();
               },
               icon: Icon(
-                Icons.power_settings_new,
+                Icons.exit_to_app,
                 color: Colors.black,
                 size: 30,
               ),
@@ -92,10 +96,13 @@ class _HomeState extends State<Home> {
                         return (filter == null || filter == ""
                             ? InkWell(
                                 child: MyCard(
-                                  child: Text(key),
+                                  height: 80,
+                                  child: Text(key,textScaleFactor: 1.5,),
                                 ),
+                                onLongPress: () {
+                                  confirm(context, key);
+                                },
                                 onTap: () {
-                                  // print(snapshot.data.data[key]);
                                   Navigator.pushNamed(context, '/kadam',
                                       arguments: [key, uid]);
                                 },
@@ -103,10 +110,13 @@ class _HomeState extends State<Home> {
                             : key.toLowerCase().contains(filter.toLowerCase())
                                 ? InkWell(
                                     child: MyCard(
-                                      child: Text(key),
+                                      height: 80,
+                                      child: Text(key,textScaleFactor: 1.5,),
                                     ),
+                                    onLongPress: () {
+                                      confirm(context, key);
+                                    },
                                     onTap: () {
-                                      // print(snapshot.data.data[key]);
                                       Navigator.pushNamed(context, '/kadam',
                                           arguments: [key, uid]);
                                     },
@@ -126,6 +136,51 @@ class _HomeState extends State<Home> {
             return myDialog(context);
           },
         ));
+  }
+
+  confirm(BuildContext context, String name) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            backgroundColor: Colors.grey.shade100.withOpacity(0),
+            child: Container(
+              height: 120,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Do you want to delete?',textScaleFactor: 1.2,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('Yes',style: TextStyle(color: Colors.red),),
+                        color: Colors.white,
+                        colorBrightness: Brightness.light,
+                        onPressed: () {
+                          Repository.get().deleteArray(name);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('Cancel'),
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(27.0),
+              ),
+            ),
+          );
+        });
   }
 
   myDialog(BuildContext context) {

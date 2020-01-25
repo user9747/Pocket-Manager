@@ -25,24 +25,47 @@ class Kadam extends StatelessWidget {
                   child:
                       CircularProgressIndicator(backgroundColor: Colors.white));
             } else {
-              return ListView.builder(
-                itemCount: snapshot.data.data[key].length,
-                itemBuilder: (_, index) {
-                  // print(snapshot.data.data.keys.toList()[index]);
-                  // var key = snapshot.data.data.keys.toList()[index];
-                  print(snapshot.data.data[key][index]);
-                  var data = snapshot.data.data[key][index];
-                  return InkWell(
-                    child: MyCard(
-                      child: Details(key, data['amount'], data['date'],
-                          data['description']),
+              var n = snapshot.data.data[key];
+              // print(n[0]['amount']);
+              double sum = 0;
+              // sum = snapshot.data.data[key]
+              // .reduce((curr, next) => curr['amount'] + next['amount']);
+              // print(sum);
+              // print(snapshot.data.data[key]);
+              snapshot.data.data[key].forEach((f){sum = sum + f['amount'] ;} );
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 50,
+                  ),
+                  MyCard(
+                    height: 55,
+                    child: Text(
+                      '₹ $sum',
+                      textScaleFactor: 3.2,
+                      style: TextStyle(color: sumColor(sum).withOpacity(.7)),
                     ),
-                    onTap: () {
-                      // print(snapshot.data.data [key]);
-                      // Navigator.pushNamed(context, '/kadam',arguments: snapshot);
-                    },
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: snapshot.data.data[key].length,
+                      itemBuilder: (_, index) {
+                        // print(snapshot.data.data.keys.toList()[index]);
+                        // var key = snapshot.data.data.keys.toList()[index];
+                        print(snapshot.data.data[key][index]);
+                        var data = snapshot.data.data[key][index];
+                        return InkWell(
+                          child: MyCard(
+                            height: 90,
+                            child: Details(key, data['amount'], data['date'],
+                                data['description']),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
               );
             }
           },
@@ -53,6 +76,12 @@ class Kadam extends StatelessWidget {
             return myDialog(context, key);
           },
         ));
+  }
+
+  sumColor(var sum) {
+    if (sum < 0) return Colors.red;
+
+    return Colors.green;
   }
 
   myDialog(BuildContext context, String name) {
@@ -73,6 +102,7 @@ class Details extends StatelessWidget {
   DateTime date;
   String desc;
   Timestamp timeStamp;
+  Color amountColor = Colors.green.withOpacity(.7);
 
   Details(name, amount, date, desc) {
     this.name = name;
@@ -83,15 +113,21 @@ class Details extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
+    if (amount < 0) {
+      this.amountColor = Colors.red.withOpacity(.7);
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Text('₹${amount}'),
+            Text(
+              '₹${amount}',
+              style: TextStyle(color: amountColor),textScaleFactor: 2.5,
+            ),
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: Icon(Icons.delete_outline),
               onPressed: () {
                 confirm(context);
               },
@@ -102,8 +138,7 @@ class Details extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Text(desc),
-            Text(
-                '${date.day}-${date.month}-${date.year}(${date.hour}:${date.minute})')
+            Text('${date.day}-${date.month}-${date.year}')
           ],
         )
       ],
@@ -121,12 +156,14 @@ class Details extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Do you want to delete?'),
+                  Text('Do you want to delete?',textScaleFactor: 1.2,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       RaisedButton(
-                        child: Text('Yes'),
+                        child: Text('Yes',style: TextStyle(color: Colors.red),),
+                        color: Colors.white,
+                        colorBrightness: Brightness.dark,
                         onPressed: () {
                           Repository.get()
                               .removeRecord(name, amount, desc, timeStamp);
@@ -134,7 +171,8 @@ class Details extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
-                        child: Text('Cancel'),
+                        child: Text('Cancel',),
+                        color: Colors.white,
                         onPressed: () {
                           Navigator.pop(context);
                         },

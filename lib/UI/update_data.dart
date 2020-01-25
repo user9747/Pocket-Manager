@@ -30,7 +30,7 @@ class Repository {
       await databaseReference
           .collection("user")
           .document(user.uid)
-          .updateData({name: FieldValue.arrayUnion(arr)}); 
+          .updateData({name: FieldValue.arrayUnion(arr)});
     } else {
       await databaseReference
           .collection("user")
@@ -39,7 +39,8 @@ class Repository {
     }
   }
 
-  void removeRecord(String name, double amount, String desc,Timestamp now) async {
+  void removeRecord(
+      String name, double amount, String desc, Timestamp now) async {
     print("Creating Record...");
     user = await FirebaseAuth.instance.currentUser();
     List arr = [];
@@ -70,6 +71,13 @@ class Repository {
           .document(user.uid)
           .setData({name: arr});
     }
+  }
+
+  void deleteArray(String name) async {
+    await databaseReference
+        .collection("user")
+        .document(user.uid)
+        .updateData({name: FieldValue.delete()});
   }
 
   Future getCurrentUser() async {

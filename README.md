@@ -1,3 +1,4 @@
+![alt text](https://github.com/user9747/Pocket-Manager/workflows/.github/workflows/flutter.yml/badge.svg)
 # kadam_manager
 
 A new Flutter project.

@@ -1,4 +1,4 @@
-![alt text](https://github.com/user9747/Pocket-Manager/workflows/Test, Build and Release apk/badge.svg "Flutter Build")
+![Test, Build and Release apk](https://github.com/user9747/Pocket-Manager/workflows/Test,%20Build%20and%20Release%20apk/badge.svg)
 # kadam_manager
 
 A new Flutter project.

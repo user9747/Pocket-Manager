@@ -24,19 +24,24 @@ class Repository {
     // String name = "Amal";
     List arr = [];
     arr.add({'date': now, 'amount': amount, 'description': desc});
-    DocumentSnapshot snap =
-        await databaseReference.collection("user").document(user.uid).get();
-    if (snap.exists) {
-      await databaseReference
-          .collection("user")
-          .document(user.uid)
-          .updateData({name: FieldValue.arrayUnion(arr)});
-    } else {
-      await databaseReference
-          .collection("user")
-          .document(user.uid)
-          .setData({name: arr});
-    }
+    await databaseReference
+        .collection("user")
+        .document(user.uid)
+        .setData({name: FieldValue.arrayUnion(arr)}, merge: true);
+
+    // DocumentSnapshot snap =
+    //     await databaseReference.collection("user").document(user.uid).get();
+    // if (snap.exists) {
+    //   await databaseReference
+    //       .collection("user")
+    //       .document(user.uid)
+    //       .updateData({name: FieldValue.arrayUnion(arr)});
+    // } else {
+    //   await databaseReference
+    //       .collection("user")
+    //       .document(user.uid)
+    //       .setData({name: arr});
+    // }
   }
 
   void removeRecord(
@@ -55,22 +60,37 @@ class Repository {
     }
   }
 
-  void createUserDoc(String name) async {
+  snapshotExists() async {
     user = await FirebaseAuth.instance.currentUser();
-    List arr = [];
     DocumentSnapshot snap =
         await databaseReference.collection("user").document(user.uid).get();
     if (snap.exists) {
-      await databaseReference
-          .collection("user")
-          .document(user.uid)
-          .updateData({name: FieldValue.arrayUnion(arr)});
-    } else {
-      await databaseReference
-          .collection("user")
-          .document(user.uid)
-          .setData({name: arr});
+      return true;
     }
+    return false;
+  }
+
+  void createUserDoc(String name) async {
+    user = await FirebaseAuth.instance.currentUser();
+    List arr = [];
+    // DocumentSnapshot snap =
+    //     await databaseReference.collection("user").document(user.uid).get();
+
+    await databaseReference
+        .collection("user")
+        .document(user.uid)
+        .setData({name: FieldValue.arrayUnion(arr)}, merge: true);
+    // if (snap.exists) {
+    //   await databaseReference
+    //       .collection("user")
+    //       .document(user.uid)
+    //       .updateData({name: FieldValue.arrayUnion(arr)});
+    // } else {
+    //   await databaseReference
+    //       .collection("user")
+    //       .document(user.uid)
+    //       .setData({name: arr});
+    // }
   }
 
   void deleteArray(String name) async {

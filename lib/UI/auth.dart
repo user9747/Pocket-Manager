@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'update_data.dart';
 
 class Auth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -10,9 +11,11 @@ class Auth {
           email: email, password: password);
       // AuthResult result = await _auth.createUserWithEmailAndPassword(email: email,password: password);
       FirebaseUser user = result.user;
-      if (user != null)
+      if (user != null) {
+        Repository.get()
+            .createUserDoc('Long new person');
         return true;
-      else {
+      } else {
         print("incrct user");
         return false;
       }
@@ -50,9 +53,13 @@ class Auth {
               accessToken: (await account.authentication).accessToken));
       // AuthResult result = await _auth.createUserWithEmailAndPassword(email: email,password: password);
       FirebaseUser user = result.user;
-      if (user != null)
+      if (user != null) {
+        if (! await Repository.get().snapshotExists()) {
+          Repository.get()
+              .createUserDoc('Long Press to Delete Me Use + to add new person');
+        }
         return true;
-      else {
+      } else {
         print("incrct user");
         return false;
       }

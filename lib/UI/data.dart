@@ -32,7 +32,9 @@ class Kadam extends StatelessWidget {
               // .reduce((curr, next) => curr['amount'] + next['amount']);
               // print(sum);
               // print(snapshot.data.data[key]);
-              snapshot.data.data[key].forEach((f){sum = sum + f['amount'] ;} );
+              snapshot.data.data[key].forEach((f) {
+                sum = sum + f['amount'];
+              });
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -124,7 +126,8 @@ class Details extends StatelessWidget {
           children: <Widget>[
             Text(
               '₹${amount}',
-              style: TextStyle(color: amountColor),textScaleFactor: 2.5,
+              style: TextStyle(color: amountColor),
+              textScaleFactor: 2.5,
             ),
             IconButton(
               icon: Icon(Icons.delete_outline),
@@ -156,12 +159,18 @@ class Details extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('Do you want to delete?',textScaleFactor: 1.2,),
+                  Text(
+                    'Do you want to delete?',
+                    textScaleFactor: 1.2,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       RaisedButton(
-                        child: Text('Yes',style: TextStyle(color: Colors.red),),
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(color: Colors.red),
+                        ),
                         color: Colors.white,
                         colorBrightness: Brightness.dark,
                         onPressed: () {
@@ -171,7 +180,9 @@ class Details extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
-                        child: Text('Cancel',),
+                        child: Text(
+                          'Cancel',
+                        ),
                         color: Colors.white,
                         onPressed: () {
                           Navigator.pop(context);
@@ -202,7 +213,7 @@ class DialogueForm extends StatefulWidget {
 class _DialogueFormState extends State<DialogueForm> {
   final amountController = TextEditingController();
   final descController = TextEditingController();
-
+  bool isSwitched = false;
   @override
   void dispose() {
     amountController.dispose();
@@ -220,6 +231,27 @@ class _DialogueFormState extends State<DialogueForm> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.arrow_downward,color: Colors.green,),
+                Switch(
+                  value: isSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      isSwitched = value;
+                      print(isSwitched);
+                    });
+                  },
+                  activeTrackColor: Colors.red[100],
+                  activeColor: Colors.red,
+                  inactiveTrackColor: Colors.green[100],
+                  inactiveThumbColor: Colors.green,
+                ),
+                Icon(Icons.arrow_upward,color: Colors.red,)
+              ],
+            ),
             TextFormField(
               decoration: InputDecoration(
                   labelText: 'Amount', icon: Icon(Icons.monetization_on)),
@@ -247,8 +279,12 @@ class _DialogueFormState extends State<DialogueForm> {
                 print(amountController.text);
                 if (amountController.text != null &&
                     descController.text != null) {
-                  Repository.get().createRecord(widget.name,
-                      double.parse(amountController.text), descController.text);
+                      double am = double.parse(amountController.text);
+                      if(isSwitched){
+                        am = -1 * am;
+                      }
+                  Repository.get().createRecord(widget.name,am
+                      , descController.text);
                 }
                 Navigator.pop(context);
               },

@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "757603621824-14ldp2dmuanpqrjit8mdmc0ktbkf51q2.apps.googleusercontent.com",
+          "client_id": "757603621824-hiaalegmusgau3cm9cu0t2mmtfqpbng8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.kadam_manager",
-            "certificate_hash": "ef26d42d5a09b3424b2c407a4f8a38542424100a"
+            "certificate_hash": "d913ad19974824959ca7b9453a58798a6916d34a"
           }
         },
         {

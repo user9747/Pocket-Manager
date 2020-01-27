@@ -57,7 +57,7 @@ def keystoreProperties = new Properties()
        release {
            keyAlias 'key'
            keyPassword 'android'
-           storeFile file('/home/user9747/key.jks')
+           storeFile file('../key.jks')
            storePassword 'android'
        }
    }
